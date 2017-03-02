@@ -2,8 +2,8 @@ package com.ru.usty.elevator;
 
 public class Elevator implements Runnable{
 	
-	public ElevatorScene eleScene;
-	
+	private ElevatorScene eleScene;
+	private int currentFloor;
 	
 	public Elevator(ElevatorScene es){
 		eleScene = es;
@@ -13,6 +13,10 @@ public class Elevator implements Runnable{
 	public void run() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public int getFloor(){
+		return currentFloor;
 	}
 	
 }
