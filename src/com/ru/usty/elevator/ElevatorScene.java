@@ -11,6 +11,7 @@ import java.util.concurrent.Semaphore;
  *
  */
 
+
 public class ElevatorScene {
 
 	//TO SPEED THINGS UP WHEN TESTING,
@@ -26,6 +27,9 @@ public class ElevatorScene {
 									//if it suits you
 	ArrayList<Integer> exitedCount = null;
 	public static Semaphore exitedCountMutex;
+
+	private ArrayList<Semaphore> inSemaphore;
+	private ArrayList<Semaphore> outSemaphore;
 
 	//Base function: definition must not change
 	//Necessary to add your code in this one
@@ -60,6 +64,14 @@ public class ElevatorScene {
 			this.exitedCount.add(0);
 		}
 		exitedCountMutex = new Semaphore(1);
+
+		inSemaphore = new ArrayList<Semaphore>();
+		outSemaphore = new ArrayList<Semaphore>();
+		
+		for(int i = 0; i < numberOfFloors; i++){
+			inSemaphore.add(new Semaphore(0, false));
+			outSemaphore.add(new Semaphore(0, false));
+		}
 	}
 
 	//Base function: definition must not change
