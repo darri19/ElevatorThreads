@@ -11,7 +11,7 @@ import java.util.concurrent.Semaphore;
  *
  */
 
-
+//Hello there
 public class ElevatorScene {
 
 	//TO SPEED THINGS UP WHEN TESTING,
@@ -28,8 +28,11 @@ public class ElevatorScene {
 	ArrayList<Integer> exitedCount = null;
 	public static Semaphore exitedCountMutex;
 
-	private ArrayList<Semaphore> inSemaphore;
-	private ArrayList<Semaphore> outSemaphore;
+	public ArrayList<Semaphore> inSemaphore;
+	public ArrayList<Semaphore> outSemaphore;
+
+	public ArrayList<Elevator> elevators;
+	
 
 	//Base function: definition must not change
 	//Necessary to add your code in this one
@@ -72,6 +75,12 @@ public class ElevatorScene {
 			inSemaphore.add(new Semaphore(0, false));
 			outSemaphore.add(new Semaphore(0, false));
 		}
+		
+		for(int i = 0; i < numberOfElevators; i++){
+			Elevator ele = new Elevator(this);
+			ele.run();
+			elevators.add(ele);
+		}
 	}
 
 	//Base function: definition must not change
@@ -86,7 +95,7 @@ public class ElevatorScene {
 		 * so that it can be reaped in the testSuite
 		 * (you don't have to join() yourself)
 		 */
-		Thread person = new Thread(new Person());	
+		Thread person = new Thread(new Person(sourceFloor, destinationFloor));	
 		person.start();
 
 		//dumb code, replace it!
@@ -98,18 +107,14 @@ public class ElevatorScene {
 	public int getCurrentFloorForElevator(int elevator) {
 
 		//dumb code, replace it!
-		return 1;
+		return elevators.get(elevator).getFloor();
 	}
 
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleInElevator(int elevator) {
 		
 		//dumb code, replace it!
-		switch(elevator) {
-		case 1: return 1;
-		case 2: return 4;
-		default: return 3;
-		}
+		return elevators.get(elevator).getNumOfPeople();
 	}
 
 	//Base function: definition must not change, but add your code
