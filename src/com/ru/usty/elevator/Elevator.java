@@ -19,14 +19,44 @@ public class Elevator implements Runnable{
 	@Override
 	public void run() {
 		while(true){
-			for(int i = currentFloor; i < numOfFloors; i++){
-				currentFloor = i;
-				doTheStuff();
+//			for(int i = currentFloor; i < numOfFloors; i++){
+//				currentFloor = i;
+//				doTheStuff();
+//				try {
+//					Thread.sleep(1000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//			for(int i = currentFloor; i >= 0; i--){
+//				currentFloor = i;
+//				doTheStuff();
+//				try {
+//					Thread.sleep(1000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+			
+			doTheStuff();
+			try {
+				Thread.sleep(eleScene.VISUALIZATION_WAIT_TIME);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			for(int i = currentFloor; i >= 0; i--){
-				currentFloor = i;
-				doTheStuff();
+			currentFloor++;
+			doTheStuff();
+			try {
+				Thread.sleep(eleScene.VISUALIZATION_WAIT_TIME);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			currentFloor--;
+			
 		}
 	}
 	
@@ -54,12 +84,26 @@ public class Elevator implements Runnable{
 //			eleScene.inSemaphore.get(currentFloor).release();
 //			numOfPeople++;
 //		}
-		for(int i = numOfPeople; i >= 0; i--){
-			eleScene.outSemaphore.get(currentFloor).release();			
+		try {
+			Thread.sleep(eleScene.VISUALIZATION_WAIT_TIME);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
-		for(int i = numOfPeople; i < MAX; i++){
-			eleScene.inSemaphore.get(currentFloor).release();	
+		eleScene.outSemaphore.get(currentFloor).release(numOfPeople);
+		int number = eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor);
+		
+		try {
+			Thread.sleep(eleScene.VISUALIZATION_WAIT_TIME);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+		if(number >= MAX){
+			number = MAX;
+		}
+		if(6 - numOfPeople < number){
+			number = MAX - numOfPeople;
+		}
+		eleScene.inSemaphore.get(currentFloor).release(number);	
 	}
 
 	public int getFloor(){
@@ -71,13 +115,14 @@ public class Elevator implements Runnable{
 	}
 
 	public void addPerson() {
+
 		numOfPeople++;
 		
 	}
 
 	public void removePerson() {
+
 		numOfPeople--;
-		
 	}
 	
 }

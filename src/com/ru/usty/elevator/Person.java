@@ -9,8 +9,8 @@ public class Person implements Runnable{
 	
 	//Drop this and let the whole world feel it
 	public Person(int sourceFloor, int destinationFloor, ElevatorScene elSce) {
-		this.sourceFloor = sourceFloor;
-		this.destinationFloor = destinationFloor;
+		this.sourceFloor = 0;
+		this.destinationFloor = 1;
 		this.eleScene = elSce;
 	}
 
@@ -18,10 +18,10 @@ public class Person implements Runnable{
 	@Override
 	public void run() {
 		try {
-			eleScene.inSemaphore.get(0).acquire();
+			eleScene.inSemaphore.get(sourceFloor).acquire(1);
 			eleScene.addInEle();
-			eleScene.outSemaphore.get(1).acquire();
-			eleScene.personExitsAtFloor(1);
+			eleScene.outSemaphore.get(destinationFloor).acquire(1);
+			eleScene.personExitsAtFloor(destinationFloor);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

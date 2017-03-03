@@ -92,7 +92,7 @@ public class ElevatorScene {
 //			ele.run();
 //			elevators.add(ele);
 //		}
-		elevator = new Elevator(this);
+		//elevator = new Elevator(this);
 
 		System.out.println("RESTART SCENE IS BEING RUN");
 	}
@@ -118,17 +118,16 @@ public class ElevatorScene {
 	}
 
 	//Base function: definition must not change, but add your code
-	public int getCurrentFloorForElevator(int elevator) {
+	public int getCurrentFloorForElevator(int elev) {
 
 		//dumb code, replace it!
 		//return elevators.get(elevator).getFloor();
-		return this.elevator.getFloor();
+		return elevator.getFloor();
 	}
 
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleInElevator(int elevator) {
 		
-		//dumb code, replace it!
 		//return elevators.get(elevator).getNumOfPeople();
 		return this.elevator.getNumOfPeople();
 	}
