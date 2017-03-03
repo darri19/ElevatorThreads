@@ -18,8 +18,8 @@ public class Person implements Runnable{
 	@Override
 	public void run() {
 		try {
-			eleScene.inSemaphore.get(1).acquire();
-			
+			eleScene.inSemaphore.get(0).acquire();
+			eleScene.addInEle();
 			eleScene.outSemaphore.get(1).acquire();
 			eleScene.personExitsAtFloor(1);
 		} catch (InterruptedException e) {
