@@ -8,20 +8,20 @@ public class Person implements Runnable{
 	public int destinationFloor;
 	
 	//Drop this and let the whole world feel it
-	public Person(int sourceFloor, int destinationFloor) {
+	public Person(int sourceFloor, int destinationFloor, ElevatorScene elSce) {
 		this.sourceFloor = sourceFloor;
 		this.destinationFloor = destinationFloor;
+		this.eleScene = elSce;
 	}
 
 	//I'M SO FANCY
 	@Override
 	public void run() {
 		try {
-			System.out.println(sourceFloor);
-			eleScene.inSemaphore.get(sourceFloor).acquire(1);
+			eleScene.inSemaphore.get(1).acquire();
 			
-			eleScene.outSemaphore.get(destinationFloor).acquire(1);
-			eleScene.personExitsAtFloor(destinationFloor);
+			eleScene.outSemaphore.get(1).acquire();
+			eleScene.personExitsAtFloor(1);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -109,7 +109,7 @@ public class ElevatorScene {
 		 * so that it can be reaped in the testSuite
 		 * (you don't have to join() yourself)
 		 */
-		Thread person = new Thread(new Person(sourceFloor, destinationFloor));	
+		Thread person = new Thread(new Person(sourceFloor, destinationFloor, this));	
 		person.start();
 
 		//dumb code, replace it!
