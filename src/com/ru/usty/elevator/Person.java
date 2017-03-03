@@ -17,9 +17,10 @@ public class Person implements Runnable{
 	@Override
 	public void run() {
 		try {
-			eleScene.inSemaphore.get(sourceFloor).acquire();
+			System.out.println(sourceFloor);
+			eleScene.inSemaphore.get(sourceFloor).acquire(1);
 			
-			eleScene.outSemaphore.get(destinationFloor).acquire();
+			eleScene.outSemaphore.get(destinationFloor).acquire(1);
 			eleScene.personExitsAtFloor(destinationFloor);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

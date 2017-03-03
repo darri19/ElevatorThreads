@@ -16,33 +16,30 @@ public class Elevator implements Runnable{
 	@Override
 	public void run() {
 		while(true){
-			for(; currentFloor < eleScene.getNumberOfFloors(); currentFloor++){
-				try {
-					doTheStuff(currentFloor);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			for(; currentFloor >= 0; currentFloor--){
-				try {
-					doTheStuff(currentFloor);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+//			for(; currentFloor < eleScene.getNumberOfFloors(); currentFloor++){
+//				doTheStuff();
+//			}
+//			for(; currentFloor >= 0; currentFloor--){
+//				doTheStuff();
+//			}
 		}
 	}
 	
-	private void doTheStuff(int currFloor) throws InterruptedException {
+	private void doTheStuff() {
 		for(int i = numOfPeople; i >= 0; i--){
-			eleScene.outSemaphore.get(currFloor).release();
+			System.out.println(currentFloor);
+			
+			eleScene.outSemaphore.get(currentFloor).release();
 		}
 		for(int i = numOfPeople; i >= 0; i--){
-			eleScene.outSemaphore.get(currFloor).acquire();
+			try {
+				eleScene.outSemaphore.get(currentFloor).acquire();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		int number = eleScene.getNumberOfPeopleWaitingAtFloor(currFloor);
+		int number = eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor);
 		if(number >= MAX){
 			number = MAX;
 		}
@@ -50,7 +47,7 @@ public class Elevator implements Runnable{
 			number = MAX - numOfPeople;
 		}
 		for (int i = 0; i < number; i++){
-			eleScene.inSemaphore.get(currFloor).release();
+			eleScene.inSemaphore.get(currentFloor).release();
 			numOfPeople++;
 		}
 	}

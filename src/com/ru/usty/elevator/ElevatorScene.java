@@ -31,7 +31,8 @@ public class ElevatorScene {
 	public ArrayList<Semaphore> inSemaphore;
 	public ArrayList<Semaphore> outSemaphore;
 
-	public ArrayList<Elevator> elevators;
+	//public ArrayList<Elevator> elevators;
+	public Elevator elevator = new Elevator(this);
 	
 
 	//Base function: definition must not change
@@ -71,16 +72,29 @@ public class ElevatorScene {
 		inSemaphore = new ArrayList<Semaphore>();
 		outSemaphore = new ArrayList<Semaphore>();
 		
-		for(int i = 0; i < numberOfFloors; i++){
-			inSemaphore.add(new Semaphore(0, false));
-			outSemaphore.add(new Semaphore(0, false));
-		}
+//		for(int i = 0; i < numberOfFloors; i++){
+//			inSemaphore.add(new Semaphore(0));
+//			outSemaphore.add(new Semaphore(0));
+//		}
+
+		Thread ele = new Thread(elevator);
 		
-		for(int i = 0; i < numberOfElevators; i++){
-			Elevator ele = new Elevator(this);
-			ele.run();
-			elevators.add(ele);
-		}
+		inSemaphore.add(new Semaphore(0));
+		outSemaphore.add(new Semaphore(0));
+		inSemaphore.add(new Semaphore(0));
+		outSemaphore.add(new Semaphore(0));
+		
+
+		ele.start();
+		
+//		for(int i = 0; i < numberOfElevators; i++){
+//			Elevator ele = new Elevator(this);
+//			ele.run();
+//			elevators.add(ele);
+//		}
+		elevator = new Elevator(this);
+
+		System.out.println("RESTART SCENE IS BEING RUN");
 	}
 
 	//Base function: definition must not change
@@ -100,21 +114,23 @@ public class ElevatorScene {
 
 		//dumb code, replace it!
 		personCount.set(sourceFloor, personCount.get(sourceFloor) + 1);
-		return person;  //this means that the testSuite will not wait for the threads to finish
+		return null;//person;  //this means that the testSuite will not wait for the threads to finish
 	}
 
 	//Base function: definition must not change, but add your code
 	public int getCurrentFloorForElevator(int elevator) {
 
 		//dumb code, replace it!
-		return elevators.get(elevator).getFloor();
+		//return elevators.get(elevator).getFloor();
+		return this.elevator.getFloor();
 	}
 
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleInElevator(int elevator) {
 		
 		//dumb code, replace it!
-		return elevators.get(elevator).getNumOfPeople();
+		//return elevators.get(elevator).getNumOfPeople();
+		return this.elevator.getNumOfPeople();
 	}
 
 	//Base function: definition must not change, but add your code
