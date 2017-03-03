@@ -12,12 +12,11 @@ public class Elevator implements Runnable{
 		eleScene = es;
 		currentFloor = 0;
 		numOfPeople = 0;
-		numOfFloors = 2;
-		//numOfFloors = eleScene.getNumberOfFloors();
 	}
 
 	@Override
 	public void run() {
+		numOfFloors = eleScene.getNumberOfFloors();
 		while(true){
 //			for(int i = currentFloor; i < numOfFloors; i++){
 //				currentFloor = i;
@@ -100,10 +99,11 @@ public class Elevator implements Runnable{
 		if(number >= MAX){
 			number = MAX;
 		}
-		if(6 - numOfPeople < number){
+		if(MAX - numOfPeople < number){
 			number = MAX - numOfPeople;
 		}
 		eleScene.inSemaphore.get(currentFloor).release(number);	
+		eleScene.personCount.set(currentFloor, eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor)-number);
 	}
 
 	public int getFloor(){

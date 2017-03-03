@@ -183,6 +183,7 @@ public class ElevatorScene {
 			exitedCount.set(floor, (exitedCount.get(floor) + 1));
 			exitedCountMutex.release();
 			elevator.removePerson();
+			
 
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
