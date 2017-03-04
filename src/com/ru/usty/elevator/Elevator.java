@@ -18,44 +18,26 @@ public class Elevator implements Runnable{
 	public void run() {
 		numOfFloors = eleScene.getNumberOfFloors();
 		while(true){
-//			for(int i = currentFloor; i < numOfFloors; i++){
-//				currentFloor = i;
-//				doTheStuff();
-//				try {
-//					Thread.sleep(1000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//			for(int i = currentFloor; i >= 0; i--){
-//				currentFloor = i;
-//				doTheStuff();
-//				try {
-//					Thread.sleep(1000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-			
-			doTheStuff();
-			try {
-				Thread.sleep(eleScene.VISUALIZATION_WAIT_TIME);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			for(int i = currentFloor+1; i < numOfFloors; i++){
+				currentFloor = i;
+				doTheStuff();
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			currentFloor++;
-			doTheStuff();
-			try {
-				Thread.sleep(eleScene.VISUALIZATION_WAIT_TIME);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			for(int i = currentFloor-1; i >= 0; i--){
+				currentFloor = i;
+				doTheStuff();
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			currentFloor--;
-			
 		}
 	}
 	
@@ -84,18 +66,23 @@ public class Elevator implements Runnable{
 //			numOfPeople++;
 //		}
 		try {
-			Thread.sleep(eleScene.VISUALIZATION_WAIT_TIME);
+			Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		//Let people out
 		eleScene.outSemaphore.get(currentFloor).release(numOfPeople);
-		int number = eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor);
+		
 		
 		try {
-			Thread.sleep(eleScene.VISUALIZATION_WAIT_TIME);
+			Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
+		eleScene.outSemaphore.get(currentFloor).drainPermits();
+		//Let people in
+		int number = eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor);
 		if(number >= MAX){
 			number = MAX;
 		}

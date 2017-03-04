@@ -72,17 +72,13 @@ public class ElevatorScene {
 		inSemaphore = new ArrayList<Semaphore>();
 		outSemaphore = new ArrayList<Semaphore>();
 		
-//		for(int i = 0; i < numberOfFloors; i++){
-//			inSemaphore.add(new Semaphore(0));
-//			outSemaphore.add(new Semaphore(0));
-//		}
+		for(int i = 0; i < numberOfFloors; i++){
+			inSemaphore.add(new Semaphore(0));
+			outSemaphore.add(new Semaphore(0));
+		}
 
 		Thread ele = new Thread(elevator);
 		
-		inSemaphore.add(new Semaphore(0));
-		outSemaphore.add(new Semaphore(0));
-		inSemaphore.add(new Semaphore(0));
-		outSemaphore.add(new Semaphore(0));
 		
 
 		ele.start();
@@ -93,8 +89,6 @@ public class ElevatorScene {
 //			elevators.add(ele);
 //		}
 		//elevator = new Elevator(this);
-
-		System.out.println("RESTART SCENE IS BEING RUN");
 	}
 
 	//Base function: definition must not change

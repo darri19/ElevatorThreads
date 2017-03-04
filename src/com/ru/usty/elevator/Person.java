@@ -9,8 +9,8 @@ public class Person implements Runnable{
 	
 	//Drop this and let the whole world feel it
 	public Person(int sourceFloor, int destinationFloor, ElevatorScene elSce) {
-		this.sourceFloor = 0;
-		this.destinationFloor = 1;
+		this.sourceFloor = sourceFloor;
+		this.destinationFloor = destinationFloor;
 		this.eleScene = elSce;
 	}
 
