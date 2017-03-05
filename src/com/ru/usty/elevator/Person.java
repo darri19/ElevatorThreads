@@ -6,6 +6,7 @@ public class Person implements Runnable{
 	public ElevatorScene eleScene;
 	public int sourceFloor;
 	public int destinationFloor;
+	public int elevator;
 	
 	//Drop this and let the whole world feel it
 	public Person(int sourceFloor, int destinationFloor, ElevatorScene elSce) {
@@ -19,9 +20,10 @@ public class Person implements Runnable{
 	public void run() {
 		try {
 			eleScene.inSemaphore.get(sourceFloor).acquire(1);
-			eleScene.addInEle();
+			elevator = eleScene.getElevatorAtFloor(sourceFloor);
+			eleScene.addInEle(elevator);
 			eleScene.outSemaphore.get(destinationFloor).acquire(1);
-			eleScene.personExitsAtFloor(destinationFloor);
+			eleScene.personExitsAtFloor(destinationFloor, elevator);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

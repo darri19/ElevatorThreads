@@ -8,11 +8,13 @@ public class Elevator implements Runnable{
 	private final int  MAX = 6;
 	private int numOfFloors;
 	private int numOfWaits = 3;
+	private int elevatorNumber;
 	
-	public Elevator(ElevatorScene es){
+	public Elevator(ElevatorScene es, int eleNumber){
 		eleScene = es;
 		currentFloor = 0;
 		numOfPeople = 0;
+		elevatorNumber = eleNumber;
 	}
 
 	@Override

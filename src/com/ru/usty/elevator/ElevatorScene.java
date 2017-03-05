@@ -30,9 +30,10 @@ public class ElevatorScene {
 
 	public ArrayList<Semaphore> inSemaphore;
 	public ArrayList<Semaphore> outSemaphore;
+	public ArrayList<Elevator> elevatorAtFloor;
 
-	//public ArrayList<Elevator> elevators;
-	public Elevator elevator = new Elevator(this);
+	public ArrayList<Elevator> elevators = new ArrayList<Elevator>();
+	//public Elevator elevator = new Elevator(this);
 	
 
 	//Base function: definition must not change
@@ -52,6 +53,10 @@ public class ElevatorScene {
 
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
+		elevatorAtFloor = new ArrayList<Elevator>();
+		for(int i = 0; i< numberOfElevators; i++){
+			elevators.add(new Elevator(this,i));
+		}
 
 		personCount = new ArrayList<Integer>();
 		for(int i = 0; i < numberOfFloors; i++) {
@@ -77,11 +82,10 @@ public class ElevatorScene {
 			outSemaphore.add(new Semaphore(0));
 		}
 
-		Thread ele = new Thread(elevator);
+		for(int i = 0; i< numberOfElevators; i++){
+			new Thread(elevators.get(i)).start();
+		}
 		
-		
-
-		ele.start();
 		
 //		for(int i = 0; i < numberOfElevators; i++){
 //			Elevator ele = new Elevator(this);
@@ -110,20 +114,24 @@ public class ElevatorScene {
 		personCount.set(sourceFloor, personCount.get(sourceFloor) + 1);
 		return null;//person;  //this means that the testSuite will not wait for the threads to finish
 	}
+	
+	public int getElevatorAtFloor(int floor){
+		return elevatorAtFloor.get(floor);
+	}
 
 	//Base function: definition must not change, but add your code
 	public int getCurrentFloorForElevator(int elev) {
 
 		//dumb code, replace it!
 		//return elevators.get(elevator).getFloor();
-		return elevator.getFloor();
+		return elevators.get(elev).getFloor();
 	}
 
 	//Base function: definition must not change, but add your code
-	public int getNumberOfPeopleInElevator(int elevator) {
+	public int getNumberOfPeopleInElevator(int elev) {
 		
 		//return elevators.get(elevator).getNumOfPeople();
-		return this.elevator.getNumOfPeople();
+		return elevators.get(elev).getNumOfPeople();
 	}
 
 	//Base function: definition must not change, but add your code
@@ -170,13 +178,13 @@ public class ElevatorScene {
 	//let the system know that they have exited.
 	//Person calls it after being let off elevator
 	//but before it finishes its run.
-	public void personExitsAtFloor(int floor) {
+	public void personExitsAtFloor(int floor, Elevator elev) {
 		try {
 			
 			exitedCountMutex.acquire();
 			exitedCount.set(floor, (exitedCount.get(floor) + 1));
 			exitedCountMutex.release();
-			elevator.removePerson();
+			elev.removePerson();
 			
 
 		} catch (InterruptedException e) {
@@ -196,8 +204,8 @@ public class ElevatorScene {
 		}
 	}
 
-	public void addInEle() {
-		elevator.addPerson();
+	public void addInEle(Elevator elev) {
+		elev.addPerson();
 		
 	}
 
