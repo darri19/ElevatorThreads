@@ -52,6 +52,7 @@ public class ElevatorScene {
 		 */
 		personCount = new ArrayList<Integer>();
 		elevators = new ArrayList<Elevator>();
+		doStuffAtFloorMutex = new ArrayList<Semaphore>();
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
 		elevatorAtFloor = new ArrayList<Elevator>();
@@ -74,6 +75,7 @@ public class ElevatorScene {
 			this.personCount.add(0);
 			inSemaphore.add(new Semaphore(0));
 			doStuffAtFloorMutex.add(new Semaphore(1));
+			elevatorAtFloor.add(null);
 		}
 		exitedCountMutex = new Semaphore(1);
 
@@ -133,7 +135,6 @@ public class ElevatorScene {
 
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleWaitingAtFloor(int floor) {
-
 		return personCount.get(floor);
 	}
 
