@@ -7,6 +7,7 @@ public class Elevator implements Runnable{
 	private int numOfPeople;
 	private final int  MAX = 6;
 	private int numOfFloors;
+	private int numOfWaits = 3;
 	
 	public Elevator(ElevatorScene es){
 		eleScene = es;
@@ -21,76 +22,43 @@ public class Elevator implements Runnable{
 			for(int i = currentFloor+1; i < numOfFloors; i++){
 				currentFloor = i;
 				doTheStuff();
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 			for(int i = currentFloor-1; i >= 0; i--){
 				currentFloor = i;
 				doTheStuff();
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		}
 	}
 	
 	private void doTheStuff() {
-//		for(int i = numOfPeople; i >= 0; i--){
-//			System.out.println(currentFloor);
-//			eleScene.outSemaphore.get(currentFloor).release();
-//		}
-//		for(int i = numOfPeople; i >= 0; i--){
-//			try {
-//				eleScene.outSemaphore.get(currentFloor).acquire();
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		int number = eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor);
-//		if(number >= MAX){
-//			number = MAX;
-//		}
-//		if(6 - numOfPeople < number){
-//			number = MAX - numOfPeople;
-//		}
-//		for (int i = 0; i < number; i++){
-//			eleScene.inSemaphore.get(currentFloor).release();
-//			numOfPeople++;
-//		}
-		try {
-			Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+
+		waitABit();
+		
 		//Let people out
 		eleScene.outSemaphore.get(currentFloor).release(numOfPeople);
+		waitABit();
+		eleScene.outSemaphore.get(currentFloor).drainPermits();
 		
-		
+		//Let people in
+		int numberOfPeopleToLetIn = eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor);
+		if(numberOfPeopleToLetIn >= MAX){
+			numberOfPeopleToLetIn = MAX;
+		}
+		if(MAX - numOfPeople < numberOfPeopleToLetIn){
+			numberOfPeopleToLetIn = MAX - numOfPeople;
+		}
+		eleScene.inSemaphore.get(currentFloor).release(numberOfPeopleToLetIn);	
+		eleScene.personCount.set(currentFloor, eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor)-numberOfPeopleToLetIn);
+		waitABit();
+	}
+
+	private void waitABit() {
 		try {
-			Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME);
+			Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME/numOfWaits);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-		eleScene.outSemaphore.get(currentFloor).drainPermits();
-		//Let people in
-		int number = eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor);
-		if(number >= MAX){
-			number = MAX;
-		}
-		if(MAX - numOfPeople < number){
-			number = MAX - numOfPeople;
-		}
-		eleScene.inSemaphore.get(currentFloor).release(number);	
-		eleScene.personCount.set(currentFloor, eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor)-number);
+		
 	}
 
 	public int getFloor(){
@@ -102,13 +70,10 @@ public class Elevator implements Runnable{
 	}
 
 	public void addPerson() {
-
 		numOfPeople++;
-		
 	}
 
 	public void removePerson() {
-
 		numOfPeople--;
 	}
 	
