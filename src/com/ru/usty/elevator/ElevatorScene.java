@@ -29,10 +29,10 @@ public class ElevatorScene {
 	public static Semaphore exitedCountMutex;
 
 	public ArrayList<Semaphore> inSemaphore;
-	public ArrayList<Semaphore> outSemaphore;
+	public ArrayList<Semaphore> doStuffAtFloorMutex;
 	public ArrayList<Elevator> elevatorAtFloor;
 
-	public ArrayList<Elevator> elevators = new ArrayList<Elevator>();
+	public ArrayList<Elevator> elevators;
 	//public Elevator elevator = new Elevator(this);
 	
 
@@ -50,7 +50,8 @@ public class ElevatorScene {
 		 * If you can, tell any currently running
 		 * elevator threads to stop
 		 */
-
+		personCount = new ArrayList<Integer>();
+		elevators = new ArrayList<Elevator>();
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
 		elevatorAtFloor = new ArrayList<Elevator>();
@@ -58,10 +59,7 @@ public class ElevatorScene {
 			elevators.add(new Elevator(this,i));
 		}
 
-		personCount = new ArrayList<Integer>();
-		for(int i = 0; i < numberOfFloors; i++) {
-			this.personCount.add(0);
-		}
+		
 
 		if(exitedCount == null) {
 			exitedCount = new ArrayList<Integer>();
@@ -69,18 +67,17 @@ public class ElevatorScene {
 		else {
 			exitedCount.clear();
 		}
+
+		inSemaphore = new ArrayList<Semaphore>();
 		for(int i = 0; i < getNumberOfFloors(); i++) {
 			this.exitedCount.add(0);
+			this.personCount.add(0);
+			inSemaphore.add(new Semaphore(0));
+			doStuffAtFloorMutex.add(new Semaphore(1));
 		}
 		exitedCountMutex = new Semaphore(1);
 
-		inSemaphore = new ArrayList<Semaphore>();
-		outSemaphore = new ArrayList<Semaphore>();
 		
-		for(int i = 0; i < numberOfFloors; i++){
-			inSemaphore.add(new Semaphore(0));
-			outSemaphore.add(new Semaphore(0));
-		}
 
 		for(int i = 0; i< numberOfElevators; i++){
 			new Thread(elevators.get(i)).start();
@@ -115,7 +112,7 @@ public class ElevatorScene {
 		return null;//person;  //this means that the testSuite will not wait for the threads to finish
 	}
 	
-	public int getElevatorAtFloor(int floor){
+	public Elevator getElevatorAtFloor(int floor){
 		return elevatorAtFloor.get(floor);
 	}
 

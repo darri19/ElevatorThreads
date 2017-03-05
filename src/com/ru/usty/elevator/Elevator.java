@@ -1,5 +1,8 @@
 package com.ru.usty.elevator;
 
+import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
+
 public class Elevator implements Runnable{
 	
 	private ElevatorScene eleScene;
@@ -8,13 +11,17 @@ public class Elevator implements Runnable{
 	private final int  MAX = 6;
 	private int numOfFloors;
 	private int numOfWaits = 3;
-	private int elevatorNumber;
+	public ArrayList<Semaphore> outSemaphore;
 	
 	public Elevator(ElevatorScene es, int eleNumber){
 		eleScene = es;
 		currentFloor = 0;
 		numOfPeople = 0;
-		elevatorNumber = eleNumber;
+
+		outSemaphore = new ArrayList<Semaphore>();
+		for(int i = 0; i < eleScene.getNumberOfFloors(); i++){
+			outSemaphore.add(new Semaphore(0));
+		}
 	}
 
 	@Override
@@ -33,13 +40,19 @@ public class Elevator implements Runnable{
 	}
 	
 	private void doTheStuff() {
-
+		
+		try {
+			eleScene.doStuffAtFloorMutex.get(currentFloor).acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		eleScene.elevatorAtFloor.set(currentFloor, this);
 		waitABit();
 		
 		//Let people out
-		eleScene.outSemaphore.get(currentFloor).release(numOfPeople);
+		outSemaphore.get(currentFloor).release(numOfPeople);
 		waitABit();
-		eleScene.outSemaphore.get(currentFloor).drainPermits();
+		outSemaphore.get(currentFloor).drainPermits();
 		
 		//Let people in
 		int numberOfPeopleToLetIn = eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor);
@@ -52,6 +65,8 @@ public class Elevator implements Runnable{
 		eleScene.inSemaphore.get(currentFloor).release(numberOfPeopleToLetIn);	
 		eleScene.personCount.set(currentFloor, eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor)-numberOfPeopleToLetIn);
 		waitABit();
+
+		eleScene.doStuffAtFloorMutex.get(currentFloor).release();
 	}
 
 	private void waitABit() {
