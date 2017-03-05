@@ -28,14 +28,25 @@ public class Elevator implements Runnable{
 	public void run() {
 		numOfFloors = eleScene.getNumberOfFloors();
 		while(true){
-			for(int i = currentFloor+1; i < numOfFloors; i++){
-				currentFloor = i;
-				doTheStuff();
+			if(!eleScene.isAnyButtonPushed() && numOfPeople==0) {
+				goToFirstFloor();
+			} else {
+				int i;
+				for(i = currentFloor+1; i < numOfFloors; i++){
+					currentFloor = i;
+					doTheStuff();
+				}
+				for(i = currentFloor-1; i >= 0; i--){
+					currentFloor = i;
+					doTheStuff();
+				}				
 			}
-			for(int i = currentFloor-1; i >= 0; i--){
-				currentFloor = i;
-				doTheStuff();
-			}
+		}
+	}
+	
+	private void goToFirstFloor() {
+		if(currentFloor>0) {
+			currentFloor--;
 		}
 	}
 	
@@ -55,15 +66,17 @@ public class Elevator implements Runnable{
 		outSemaphore.get(currentFloor).drainPermits();
 		
 		//Let people in
-		int numberOfPeopleToLetIn = eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor);
-		if(numberOfPeopleToLetIn >= MAX){
-			numberOfPeopleToLetIn = MAX;
+		if(eleScene.isButtonPushedAtFloor(currentFloor)) {
+			int numberOfPeopleToLetIn = eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor);
+			if(numberOfPeopleToLetIn >= MAX){
+				numberOfPeopleToLetIn = MAX;
+			}
+			if(MAX - numOfPeople < numberOfPeopleToLetIn){
+				numberOfPeopleToLetIn = MAX - numOfPeople;
+			}
+			eleScene.inSemaphore.get(currentFloor).release(numberOfPeopleToLetIn);	
+			eleScene.personCount.set(currentFloor, eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor)-numberOfPeopleToLetIn);			
 		}
-		if(MAX - numOfPeople < numberOfPeopleToLetIn){
-			numberOfPeopleToLetIn = MAX - numOfPeople;
-		}
-		eleScene.inSemaphore.get(currentFloor).release(numberOfPeopleToLetIn);	
-		eleScene.personCount.set(currentFloor, eleScene.getNumberOfPeopleWaitingAtFloor(currentFloor)-numberOfPeopleToLetIn);
 		waitABit();
 
 		eleScene.doStuffAtFloorMutex.get(currentFloor).release();

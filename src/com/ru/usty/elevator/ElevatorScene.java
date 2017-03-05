@@ -16,60 +16,40 @@ public class ElevatorScene {
 
 	//TO SPEED THINGS UP WHEN TESTING,
 	//feel free to change this.  It will be changed during grading
-	public static final int VISUALIZATION_WAIT_TIME = 500;  //milliseconds
+	public static final int VISUALIZATION_WAIT_TIME = 150;  //milliseconds
 
 	private int numberOfFloors;
 	private int numberOfElevators;
 
-	ArrayList<Integer> personCount; //use if you want but
-									//throw away and
-									//implement differently
-									//if it suits you
-	ArrayList<Integer> exitedCount = null;
+	ArrayList<Integer> personCount;
+	ArrayList<Integer> exitedCount;
 	public static Semaphore exitedCountMutex;
 
 	public ArrayList<Semaphore> inSemaphore;
 	public ArrayList<Semaphore> doStuffAtFloorMutex;
 	public ArrayList<Elevator> elevatorAtFloor;
-
 	public ArrayList<Elevator> elevators;
-	//public Elevator elevator = new Elevator(this);
-	
 
 	//Base function: definition must not change
 	//Necessary to add your code in this one
 	public void restartScene(int numberOfFloors, int numberOfElevators) {
-
-		/**
-		 * Important to add code here to make new
-		 * threads that run your elevator-runnables
-		 * 
-		 * Also add any other code that initializes
-		 * your system for a new run
-		 * 
-		 * If you can, tell any currently running
-		 * elevator threads to stop
-		 */
-		personCount = new ArrayList<Integer>();
-		elevators = new ArrayList<Elevator>();
-		doStuffAtFloorMutex = new ArrayList<Semaphore>();
+		// Initialize variables
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
-		elevatorAtFloor = new ArrayList<Elevator>();
+
+		this.personCount = new ArrayList<Integer>();
+		this.exitedCount = new ArrayList<Integer>();
+		exitedCountMutex = new Semaphore(1);
+
+		this.inSemaphore = new ArrayList<Semaphore>();
+		this.doStuffAtFloorMutex = new ArrayList<Semaphore>();
+		this.elevatorAtFloor = new ArrayList<Elevator>();
+		this.elevators = new ArrayList<Elevator>();
+
 		for(int i = 0; i< numberOfElevators; i++){
-			elevators.add(new Elevator(this,i));
+			this.elevators.add(new Elevator(this,i));
 		}
 
-		
-
-		if(exitedCount == null) {
-			exitedCount = new ArrayList<Integer>();
-		}
-		else {
-			exitedCount.clear();
-		}
-
-		inSemaphore = new ArrayList<Semaphore>();
 		for(int i = 0; i < getNumberOfFloors(); i++) {
 			this.exitedCount.add(0);
 			this.personCount.add(0);
@@ -77,21 +57,10 @@ public class ElevatorScene {
 			doStuffAtFloorMutex.add(new Semaphore(1));
 			elevatorAtFloor.add(null);
 		}
-		exitedCountMutex = new Semaphore(1);
-
-		
 
 		for(int i = 0; i< numberOfElevators; i++){
 			new Thread(elevators.get(i)).start();
 		}
-		
-		
-//		for(int i = 0; i < numberOfElevators; i++){
-//			Elevator ele = new Elevator(this);
-//			ele.run();
-//			elevators.add(ele);
-//		}
-		//elevator = new Elevator(this);
 	}
 
 	//Base function: definition must not change
@@ -168,8 +137,16 @@ public class ElevatorScene {
 	//Base function: no need to change, just for visualization
 	//Feel free to use it though, if it helps
 	public boolean isButtonPushedAtFloor(int floor) {
-
 		return (getNumberOfPeopleWaitingAtFloor(floor) > 0);
+	}
+	public boolean isAnyButtonPushed() {
+		boolean tmp = false;
+		for(int i=0; i < numberOfFloors; i++) {
+			if(isButtonPushedAtFloor(i)) {
+				tmp = true;
+			}
+		}
+		return tmp;
 	}
 
 	//Person threads must call this function to
